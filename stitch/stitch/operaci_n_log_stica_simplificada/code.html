@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gestión Logística - Control de Abandonos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#1a1c1c",
+                      "outline": "#717783",
+                      "secondary-fixed": "#d1e4ff",
+                      "on-error-container": "#93000a",
+                      "surface": "#faf9f8",
+                      "surface-tint": "#0060ab",
+                      "on-secondary-container": "#003f6d",
+                      "inverse-primary": "#a3c9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004881",
+                      "on-primary-container": "#ffffff",
+                      "on-primary-fixed-variant": "#004883",
+                      "surface-dim": "#dadad9",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#ffffff",
+                      "on-background": "#1a1c1c",
+                      "on-primary-fixed": "#001c39",
+                      "background": "#faf9f8",
+                      "primary": "#005faa",
+                      "on-surface-variant": "#404752",
+                      "tertiary-fixed": "#d3e4ff",
+                      "on-secondary-fixed-variant": "#00497d",
+                      "secondary-container": "#5badff",
+                      "surface-bright": "#faf9f8",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#0078d4",
+                      "surface-container": "#efeeed",
+                      "surface-container-highest": "#e3e2e1",
+                      "on-tertiary-fixed": "#001c38",
+                      "surface-container-high": "#e9e8e7",
+                      "outline-variant": "#c0c7d4",
+                      "tertiary-container": "#3779bf",
+                      "error-container": "#ffdad6",
+                      "tertiary": "#1160a4",
+                      "secondary-fixed-dim": "#9ecaff",
+                      "inverse-on-surface": "#f1f0ef",
+                      "on-secondary-fixed": "#001d36",
+                      "surface-container-low": "#f4f3f2",
+                      "primary-fixed-dim": "#a3c9ff",
+                      "secondary": "#0061a3",
+                      "tertiary-fixed-dim": "#a2c9ff",
+                      "primary-fixed": "#d3e3ff",
+                      "surface-variant": "#e3e2e1",
+                      "inverse-surface": "#2f3130",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "base": "4px",
+                      "sidebar_width": "240px",
+                      "topbar_height": "48px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "display": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "display": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-md": ["16px", {"lineHeight": "22px", "fontWeight": "600"}],
+                      "headline-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f3f2f1; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .side-panel-transition { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .row-hover:hover { background-color: #f8f8f8; cursor: pointer; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- TopNavBar -->
+<header class="h-topbar_height w-full fixed top-0 z-50 bg-surface flex justify-between items-center px-lg border-b border-outline-variant">
+<div class="flex items-center gap-md">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Control de Abandonos Legales</span>
+</div>
+<div class="flex-1 max-w-xl mx-xl">
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-sm text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-xl pr-md py-1 text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Buscar expedientes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-base rounded-full">notifications</button>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-base rounded-full">settings</button>
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container font-bold text-label-md">
+            JD
+        </div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="w-sidebar_width h-full fixed left-0 top-0 pt-topbar_height bg-surface-container border-r border-outline-variant flex flex-col py-md">
+<div class="px-md mb-lg">
+<h2 class="font-headline-lg text-headline-lg font-black text-primary">Gestión Legal</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">v1.0.42</p>
+</div>
+<div class="flex flex-col gap-xs px-sm flex-1">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+            Dashboard
+        </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-primary bg-secondary-fixed border-l-4 border-primary font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">local_shipping</span>
+            Logística
+        </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+            Admin
+        </a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="ml-sidebar_width mt-topbar_height p-lg">
+<div class="max-w-[1400px] mx-auto">
+<header class="mb-lg flex justify-between items-end">
+<div>
+<h1 class="font-display text-display text-on-surface mb-xs">Bandeja de Trabajo Logística</h1>
+<nav class="flex text-label-md text-on-surface-variant gap-xs items-center">
+<span>Operaciones</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Casos Reportados</span>
+</nav>
+</div>
+<div class="flex gap-sm">
+<button class="px-md py-sm bg-surface-container-high text-on-surface border border-outline-variant rounded-lg font-label-md text-label-md flex items-center gap-xs hover:bg-surface-variant">
+<span class="material-symbols-outlined">filter_list</span> Filtrar
+                </button>
+</div>
+</header>
+<!-- Simplified Data Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Documento de Transporte</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Consignatario</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Depósito</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Estado</th>
+<th class="px-md py-sm font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Responsable</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="row-hover" onclick="toggleSidePanel()">
+<td class="px-md py-md font-body-md text-body-md font-bold text-primary">MAEU-8472910</td>
+<td class="px-md py-md font-body-md text-body-md">IMPORTADORA GLOBAL S.A.S</td>
+<td class="px-md py-md font-body-md text-body-md">DPA World - Terminal 1</td>
+<td class="px-md py-md">
+<span class="flex items-center gap-xs font-label-md text-label-md text-on-error-container bg-error-container px-sm py-0.5 rounded-full w-fit">
+<span class="w-2 h-2 rounded-full bg-error"></span> Pendiente
+                            </span>
+</td>
+<td class="px-md py-md font-body-md text-body-md">Carlos Restrepo</td>
+</tr>
+<tr class="row-hover" onclick="toggleSidePanel()">
+<td class="px-md py-md font-body-md text-body-md font-bold text-primary">HLCU-9201833</td>
+<td class="px-md py-md font-body-md text-body-md">LOGISTICA DEL SUR LTDA</td>
+<td class="px-md py-md font-body-md text-body-md">Bodegas Centrales 4</td>
+<td class="px-md py-md">
+<span class="flex items-center gap-xs font-label-md text-label-md text-on-secondary-container bg-secondary-fixed px-sm py-0.5 rounded-full w-fit">
+<span class="w-2 h-2 rounded-full bg-secondary"></span> En Traslado
+                            </span>
+</td>
+<td class="px-md py-md font-body-md text-body-md">Maria Giraldo</td>
+</tr>
+<tr class="row-hover" onclick="toggleSidePanel()">
+<td class="px-md py-md font-body-md text-body-md font-bold text-primary">SUDU-1122334</td>
+<td class="px-md py-md font-body-md text-body-md">RETAIL NACION S.A.</td>
+<td class="px-md py-md font-body-md text-body-md">Terminal Marítimo B</td>
+<td class="px-md py-md">
+<span class="flex items-center gap-xs font-label-md text-label-md text-on-primary-fixed-variant bg-primary-fixed px-sm py-0.5 rounded-full w-fit">
+<span class="w-2 h-2 rounded-full bg-primary"></span> Revisado
+                            </span>
+</td>
+<td class="px-md py-md font-body-md text-body-md">Carlos Restrepo</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Side Panel (Power Apps Pattern) -->
+<aside class="fixed top-0 right-0 h-full w-[440px] bg-surface border-l border-outline-variant shadow-2xl z-[60] transform translate-x-full side-panel-transition flex flex-col" id="sidePanel">
+<header class="h-topbar_height border-b border-outline-variant flex items-center justify-between px-md shrink-0">
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface">Gestión Logística</h3>
+<button class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-low p-base rounded-full" onclick="toggleSidePanel()">close</button>
+</header>
+<div class="flex-1 overflow-y-auto p-lg space-y-lg">
+<!-- Minimum Form Fields -->
+<div class="space-y-md">
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Funcionario Responsable</label>
+<input class="w-full border border-outline rounded p-sm text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="text" value="Carlos Restrepo"/>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Avalúo (USD)</label>
+<input class="w-full border border-outline rounded p-sm text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" type="text" value="12,450.00"/>
+</div>
+<div class="grid grid-cols-2 gap-md py-sm">
+<div class="flex items-center justify-between border border-outline-variant p-sm rounded bg-surface-container-low">
+<span class="font-label-md text-label-md">Trasladado</span>
+<div class="flex items-center gap-xs">
+<label class="text-label-sm font-bold">Sí</label>
+<input checked="" class="w-5 h-5 text-primary rounded border-outline" type="checkbox"/>
+</div>
+</div>
+<div class="flex items-center justify-between border border-outline-variant p-sm rounded bg-surface-container-low">
+<span class="font-label-md text-label-md">Inventario</span>
+<div class="flex items-center gap-xs">
+<label class="text-label-sm font-bold">Sí</label>
+<input class="w-5 h-5 text-primary rounded border-outline" type="checkbox"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Causas</label>
+<textarea class="w-full border border-outline rounded p-sm text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Causas de no traslado o no inventario..." rows="3"></textarea>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface-variant mb-xs">Observaciones</label>
+<textarea class="w-full border border-outline rounded p-sm text-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none" placeholder="Notas adicionales..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Power Apps Style Footer Buttons -->
+<footer class="p-md border-t border-outline-variant bg-surface-container-low flex flex-col gap-sm shrink-0">
+<button class="w-full py-sm bg-primary text-on-primary rounded font-label-md text-label-md hover:opacity-90 transition-opacity">Guardar Gestión</button>
+<div class="grid grid-cols-2 gap-sm">
+<button class="w-full py-sm border border-secondary text-secondary rounded font-label-md text-label-md hover:bg-secondary-fixed">Marcar como Dispuesto</button>
+<button class="w-full py-sm border border-outline text-on-surface-variant rounded font-label-md text-label-md hover:bg-surface-variant" onclick="toggleSidePanel()">Cerrar Caso</button>
+</div>
+</footer>
+</aside>
+<div class="fixed inset-0 bg-black/40 z-[55] opacity-0 pointer-events-none transition-opacity duration-300" id="overlay" onclick="toggleSidePanel()"></div>
+<script>
+    let isPanelOpen = false;
+    function toggleSidePanel() {
+        const panel = document.getElementById('sidePanel');
+        const overlay = document.getElementById('overlay');
+        isPanelOpen = !isPanelOpen;
+        
+        if (isPanelOpen) {
+            panel.classList.remove('translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100', 'pointer-events-auto');
+        } else {
+            panel.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100', 'pointer-events-auto');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+</script>
+</body></html>

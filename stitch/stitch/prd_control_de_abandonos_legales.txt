@@ -1,0 +1,15 @@
+# PRD: Control de Abandonos Legales
+
+## Overview
+Aplicación empresarial para la gestión y seguimiento del proceso de abandono legal de mercancías, diseñada para funcionarios públicos. El flujo se divide entre el equipo de Registro y Control y el equipo de Operación Logística.
+
+## Key Screens
+1. **Dashboard Registro y Control**: Vista general operativa con KPIs y casos urgentes.
+2. **Nuevo Registro / Inspección**: Formulario de entrada de datos y registro de inspecciones.
+3. **Operación Logística**: Bandeja de trabajo para casos reportados, con panel de gestión de inventario y disposición.
+4. **Administración**: Vista 360° y reportes ejecutivos para supervisores.
+
+## Data Model & States
+- **ID Principal**: Documento de Transporte.
+- **Estados**: Registrado, Pendiente Inspección, Reportado a Logística, En Gestión Logística, Dispuesto, Cerrado.
+- **Semaforización**: Verde (término), Amarillo (próximo), Rojo (vencido), Gris (cerrado).

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Control de Abandonos Legales</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-title-group">
+        <button class="icon-button" id="menuButton" type="button" aria-label="Menu">=</button>
+        <div class="topbar-title">Gestion de Abandonos Legales</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-shell">
+          <input id="globalSearch" class="search-input" type="search" placeholder="Buscar abandono..." />
+        </div>
+        <div class="tester-shell">
+          <div class="tester-label">Prueba de roles</div>
+          <label class="tester-field">
+            <span>Rol</span>
+            <select id="roleSelector"></select>
+          </label>
+          <label class="tester-field">
+            <span>Usuario</span>
+            <select id="userSelector"></select>
+          </label>
+        </div>
+        <button class="icon-button" type="button" aria-label="Configuracion">Config</button>
+        <div class="user-pill" id="userPill">JD</div>
+      </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-badge">GL</div>
+        <div>
+          <div class="brand-title">Gestion Legal</div>
+          <div class="brand-subtitle">Abandonos</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="registro" type="button">Registro y Control</button>
+        <button class="nav-item" data-view="logistica" type="button">Operacion Logistica</button>
+        <button class="nav-item" data-view="administracion" type="button">Administracion</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="footer-label">Modo de datos</div>
+        <div id="dataModeBadge" class="mode-badge">Mock local</div>
+        <button id="dataModelButton" class="sidebar-data-model" type="button">Modelo de Datos</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <section id="view-registro" class="view active"></section>
+      <section id="view-logistica" class="view"></section>
+      <section id="view-administracion" class="view"></section>
+      <section id="view-modelo" class="view"></section>
+    </main>
+  </div>
+
+  <div id="overlay" class="overlay"></div>
+  <aside id="sidePanel" class="side-panel" aria-hidden="true"></aside>
+
+  <script src="./config.js"></script>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

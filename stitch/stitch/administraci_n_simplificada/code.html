@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Slide panel animation */
+        #detail-panel {
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        #detail-panel.open {
+            transform: translateX(0);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "on-surface": "#1a1c1c",
+                      "outline": "#717783",
+                      "secondary-fixed": "#d1e4ff",
+                      "on-error-container": "#93000a",
+                      "surface": "#faf9f8",
+                      "surface-tint": "#0060ab",
+                      "on-secondary-container": "#003f6d",
+                      "inverse-primary": "#a3c9ff",
+                      "surface-container-lowest": "#ffffff",
+                      "on-tertiary-fixed-variant": "#004881",
+                      "on-primary-container": "#ffffff",
+                      "on-primary-fixed-variant": "#004883",
+                      "surface-dim": "#dadad9",
+                      "error": "#ba1a1a",
+                      "on-tertiary-container": "#ffffff",
+                      "on-background": "#1a1c1c",
+                      "on-primary-fixed": "#001c39",
+                      "background": "#faf9f8",
+                      "primary": "#005faa",
+                      "on-surface-variant": "#404752",
+                      "tertiary-fixed": "#d3e4ff",
+                      "on-secondary-fixed-variant": "#00497d",
+                      "secondary-container": "#5badff",
+                      "surface-bright": "#faf9f8",
+                      "on-tertiary": "#ffffff",
+                      "primary-container": "#0078d4",
+                      "surface-container": "#efeeed",
+                      "surface-container-highest": "#e3e2e1",
+                      "on-tertiary-fixed": "#001c38",
+                      "surface-container-high": "#e9e8e7",
+                      "outline-variant": "#c0c7d4",
+                      "tertiary-container": "#3779bf",
+                      "error-container": "#ffdad6",
+                      "tertiary": "#1160a4",
+                      "secondary-fixed-dim": "#9ecaff",
+                      "inverse-on-surface": "#f1f0ef",
+                      "on-secondary-fixed": "#001d36",
+                      "surface-container-low": "#f4f3f2",
+                      "primary-fixed-dim": "#a3c9ff",
+                      "secondary": "#0061a3",
+                      "tertiary-fixed-dim": "#a2c9ff",
+                      "primary-fixed": "#d3e3ff",
+                      "surface-variant": "#e3e2e1",
+                      "inverse-surface": "#2f3130",
+                      "on-primary": "#ffffff",
+                      "on-error": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "lg": "24px",
+                      "sm": "8px",
+                      "base": "4px",
+                      "sidebar_width": "240px",
+                      "topbar_height": "48px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "gutter": "16px"
+              },
+              "fontFamily": {
+                      "display": ["Inter"],
+                      "label-md": ["Inter"],
+                      "headline-lg-mobile": ["Inter"],
+                      "headline-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"]
+              },
+              "fontSize": {
+                      "display": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-md": ["16px", {"lineHeight": "22px", "fontWeight": "600"}],
+                      "headline-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="w-sidebar_width h-full fixed left-0 top-0 pt-topbar_height bg-surface-container dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline flex flex-col py-md z-40">
+<div class="px-md mb-xl flex items-center gap-sm">
+<div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined">gavel</span>
+</div>
+<div>
+<h1 class="font-headline-lg text-headline-lg font-black text-primary dark:text-primary-fixed leading-tight">Gestión Legal</h1>
+<p class="font-label-md text-label-md text-on-surface-variant opacity-70">v1.0.42</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="add_box">add_box</span>
+<span>New Registry</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="local_shipping">local_shipping</span>
+<span>Logistics</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-primary dark:text-primary-fixed bg-secondary-fixed dark:bg-secondary-fixed-dim border-l-4 border-primary dark:border-primary-fixed transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span>Admin</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-md">
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="contact_support">contact_support</span>
+<span>Support</span>
+</a>
+<a class="flex items-center gap-md px-md py-sm text-on-surface-variant dark:text-on-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-150 ease-in-out font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Sign Out</span>
+</a>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="h-topbar_height w-full fixed top-0 z-50 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline flex justify-between items-center px-lg ml-sidebar_width" style="width: calc(100% - 240px);">
+<div class="flex items-center gap-md">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface-container-low border-none rounded-lg pl-xl pr-md py-1 text-body-md focus:ring-1 focus:ring-primary w-64" placeholder="Buscar documento..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-sm">
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined text-primary" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors duration-200">
+<span class="material-symbols-outlined text-primary" data-icon="settings">settings</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-low p-1 pr-3 rounded-full transition-all">
+<img alt="User profile" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIpMbtbgFoOyHssRwQYLVGJm7gKRIId8o_0uPYoKX15lfRyX-iXzlrvEebGB-9wvCLo_xbWwYRpD0GcwMI6zbhQL_HL6xgpzE5tCyNEJnTvXYBsbQa0e0IlCegJ1AK3gXAiqAI5h3-qPhUuJveFt8rycKun5e46WSEQ7aYRdNtEi-LAqPaURor6LTR4Vo4zpQqBhODX75lniWnmdNFVUPx7MGMlvQWE2LcOT4sXxvQKDXZ0O7M1EVYpWQud5vH_xwJIX9F4G7lkQ5q"/>
+<span class="font-label-md text-label-md text-on-surface">Admin User</span>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-sidebar_width mt-topbar_height w-full p-lg overflow-x-hidden">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md mb-lg">
+<div>
+<h2 class="font-display text-display text-on-surface">Administración</h2>
+<p class="text-body-md text-on-surface-variant">Vista de supervisión general de casos</p>
+</div>
+<div class="flex gap-sm">
+<button class="flex items-center gap-xs px-md py-2 border border-outline-variant text-on-surface rounded-lg font-label-md hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-sm">download</span>
+                Exportar
+            </button>
+<button class="flex items-center gap-xs px-md py-2 bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-all">
+<span class="material-symbols-outlined text-sm">add</span>
+                Nuevo Registro
+            </button>
+</div>
+</div>
+<!-- Simple Text Counters -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-lg">
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase font-bold tracking-tight mb-xs">Total casos</p>
+<span class="font-display text-display text-on-surface">1,284</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase font-bold tracking-tight mb-xs">En Registro y Control</p>
+<span class="font-display text-display text-primary">330</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase font-bold tracking-tight mb-xs">En Logística</p>
+<span class="font-display text-display text-on-surface">412</span>
+</div>
+<div class="bg-surface-container-low p-md rounded-lg border border-outline-variant">
+<p class="text-label-sm text-on-surface-variant uppercase font-bold tracking-tight mb-xs">Casos Cerrados</p>
+<span class="font-display text-display text-on-surface-variant">542</span>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center gap-md mb-md">
+<div class="flex items-center gap-sm">
+<select class="bg-surface border-outline-variant rounded-lg text-body-md py-1.5 px-3 focus:ring-primary min-w-[160px]">
+<option>Estado: Todos</option>
+<option>Registrado</option>
+<option>En Trámite</option>
+<option>Vencido</option>
+</select>
+<select class="bg-surface border-outline-variant rounded-lg text-body-md py-1.5 px-3 focus:ring-primary min-w-[160px]">
+<option>Responsable: Todos</option>
+<option>R. Mendez</option>
+<option>M. Soto</option>
+<option>J. Herrera</option>
+</select>
+<select class="bg-surface border-outline-variant rounded-lg text-body-md py-1.5 px-3 focus:ring-primary min-w-[160px]">
+<option>Depósito: Todos</option>
+<option>Terminal A1</option>
+<option>Depósito Norte</option>
+<option>Puerto Central</option>
+</select>
+</div>
+<button class="text-primary font-bold text-label-md hover:underline ml-auto">Limpiar Filtros</button>
+</div>
+<!-- Main Table Section -->
+<div class="bg-surface-container-lowest rounded border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto hide-scrollbar">
+<table class="w-full border-collapse">
+<thead class="bg-surface-container-low text-on-surface-variant border-b border-outline-variant">
+<tr>
+<th class="text-left py-md px-md font-label-md text-label-md">Documento</th>
+<th class="text-left py-md px-md font-label-md text-label-md">Estado</th>
+<th class="text-left py-md px-md font-label-md text-label-md">Etapa</th>
+<th class="text-left py-md px-md font-label-md text-label-md">Consignatario</th>
+<th class="text-left py-md px-md font-label-md text-label-md">Depósito</th>
+<th class="text-left py-md px-md font-label-md text-label-md">Responsable</th>
+<th class="text-right py-md px-md font-label-md text-label-md">Días</th>
+<th class="py-md px-md"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="togglePanel('TRK-902241')">
+<td class="py-md px-md font-bold text-primary text-body-md">TRK-902241</td>
+<td class="py-md px-md">
+<span class="flex items-center gap-xs text-body-md">
+<span class="w-2 h-2 rounded-full bg-primary"></span> Registrado
+                            </span>
+</td>
+<td class="py-md px-md text-body-md">Logística</td>
+<td class="py-md px-md text-body-md truncate max-w-[140px]">Global Trans S.A.</td>
+<td class="py-md px-md text-body-md">Terminal A1</td>
+<td class="py-md px-md text-body-md">R. Mendez</td>
+<td class="py-md px-md text-right font-bold text-body-md">14</td>
+<td class="py-md px-md text-right">
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="togglePanel('EXP-884320')">
+<td class="py-md px-md font-bold text-primary text-body-md">EXP-884320</td>
+<td class="py-md px-md">
+<span class="flex items-center gap-xs text-body-md">
+<span class="w-2 h-2 rounded-full bg-error"></span> Vencido
+                            </span>
+</td>
+<td class="py-md px-md text-body-md">Inspección</td>
+<td class="py-md px-md text-body-md truncate max-w-[140px]">LogisCorp Intl.</td>
+<td class="py-md px-md text-body-md">Depósito Norte</td>
+<td class="py-md px-md text-body-md">M. Soto</td>
+<td class="py-md px-md text-right font-bold text-error text-body-md">42</td>
+<td class="py-md px-md text-right">
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer" onclick="togglePanel('BL-4422933')">
+<td class="py-md px-md font-bold text-primary text-body-md">BL-4422933</td>
+<td class="py-md px-md">
+<span class="flex items-center gap-xs text-body-md">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span> Dispuesto
+                            </span>
+</td>
+<td class="py-md px-md text-body-md">Disposición</td>
+<td class="py-md px-md text-body-md truncate max-w-[140px]">Importadora Fenix</td>
+<td class="py-md px-md text-body-md">Puerto Central</td>
+<td class="py-md px-md text-body-md">J. Herrera</td>
+<td class="py-md px-md text-right font-bold text-body-md">8</td>
+<td class="py-md px-md text-right">
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer">
+<td class="py-md px-md font-bold text-primary text-body-md">CTN-110022</td>
+<td class="py-md px-md">
+<span class="flex items-center gap-xs text-body-md">
+<span class="w-2 h-2 rounded-full bg-outline-variant"></span> Cerrado
+                            </span>
+</td>
+<td class="py-md px-md text-body-md">Finalizado</td>
+<td class="py-md px-md text-body-md truncate max-w-[140px]">Agencia Aduana Ltd.</td>
+<td class="py-md px-md text-body-md">Terminal A1</td>
+<td class="py-md px-md text-body-md">S. Vega</td>
+<td class="py-md px-md text-right font-bold text-body-md">90</td>
+<td class="py-md px-md text-right">
+<span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-md bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<span class="text-label-sm text-on-surface-variant">Mostrando 4 de 1,284 registros</span>
+<div class="flex gap-xs">
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded flex items-center justify-center bg-primary text-on-primary font-bold text-label-sm">1</button>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-variant transition-colors text-label-sm">2</button>
+<button class="w-8 h-8 rounded flex items-center justify-center hover:bg-surface-variant transition-colors border border-outline-variant">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Side Detail Panel -->
+<div class="fixed right-0 top-0 h-full w-[400px] bg-surface shadow-2xl z-[60] border-l border-outline-variant flex flex-col" id="detail-panel">
+<div class="p-lg border-b border-outline-variant flex items-center justify-between">
+<div>
+<h3 class="font-headline-lg text-headline-lg text-on-surface" id="panel-title">Detalle de Registro</h3>
+<p class="text-label-sm text-primary" id="panel-id">---</p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors" onclick="togglePanel()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-lg space-y-lg">
+<!-- Image Container -->
+<div class="aspect-video w-full rounded-lg overflow-hidden bg-surface-container-highest relative">
+<img class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU-OH0NGMMtHYQD2FFQCG3VlksEgGUi8b7VmmvmF4x6YIRuPxlWe9N1mKyx5lTRovyUHPD9ZlmkRhHTsW8v5utk_QLtSnuFOnaEsed0GPSrGmotmPRqXYs2-jsX2ROwM2EXeJIupeio45SznWgvw8lXhn58sbv8-Gjp39deNvspnQi9-5DUU8RqFfaoB8l-dKhU8qRB0T0-BUvorCahtpuOY0mijPL2VViYIZVk6v-zRrSICjI57sTgxxhgl7OmyEOJyON5gjXIF1C"/>
+</div>
+<!-- Field Groups -->
+<div class="grid grid-cols-1 gap-md">
+<div class="p-md bg-surface-container-low rounded border border-outline-variant">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-xs">Consignatario</p>
+<p class="text-body-md font-bold">Global Trans S.A.</p>
+</div>
+<div class="p-md bg-surface-container-low rounded border border-outline-variant">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-xs">Estado de Inspección</p>
+<p class="text-body-md">Mercadería verificada sin observaciones.</p>
+</div>
+<div class="p-md bg-surface-container-low rounded border border-outline-variant">
+<p class="text-[10px] text-on-surface-variant uppercase font-bold mb-xs">Ubicación</p>
+<p class="text-body-md">Pasillo 4, Fila B, Terminal A1</p>
+</div>
+</div>
+</div>
+<div class="p-lg border-t border-outline-variant bg-surface-container-low flex gap-md">
+<button class="flex-1 py-2 border border-primary text-primary rounded-lg font-label-md hover:bg-surface-container-highest transition-all">Historial</button>
+<button class="flex-1 py-2 bg-primary text-on-primary rounded-lg font-label-md hover:opacity-90 transition-all">Gestionar</button>
+</div>
+</div>
+<script>
+    function togglePanel(id) {
+        const panel = document.getElementById('detail-panel');
+        const panelId = document.getElementById('panel-id');
+        
+        if (id) {
+            panelId.innerText = id;
+            panel.classList.add('open');
+        } else {
+            panel.classList.remove('open');
+        }
+    }
+
+    window.addEventListener('click', (e) => {
+        const panel = document.getElementById('detail-panel');
+        if (panel.classList.contains('open') && !panel.contains(e.target) && !e.target.closest('tr')) {
+            panel.classList.remove('open');
+        }
+    });
+</script>
+</body></html>
