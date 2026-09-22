@@ -1,6 +1,8 @@
 # Web App
 
-Aplicacion web tipo Power Apps para gestion de abandonos legales.
+Aplicación web con estilo Power Apps para la gestión de abandonos legales.
+
+Pestañas: **GIT Registro y Control**, **GIT Operación Logística**, **Administración** (vista 360° de ambos GIT) y **Modelo de Datos**. La visibilidad de cada pestaña depende del rol.
 
 ## Lanzar
 
@@ -16,12 +18,13 @@ http://localhost:4173
 
 ## Modo SharePoint
 
-Editar [config.js](C:/Users/msoto/Documents/APPS%20DE%20ABANDONOS/webapp/config.js):
+Editar [config.js](config.js):
 
 - `dataMode: "sharepoint"`
 - `sharePoint.siteUrl`
 - `sharePoint.listAbandonos`
-- `sharePoint.listHistorial`
+- `sharePoint.listGestionRegistro`
+- `sharePoint.listGestionLogistica`
 
 Nota:
 

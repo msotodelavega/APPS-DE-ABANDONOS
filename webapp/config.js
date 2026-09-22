@@ -38,8 +38,7 @@ window.APP_CONFIG = {
   sharePoint: {
     siteUrl: "",
     listAbandonos: "ABANDONOS",
-    listInspeccionRC: "INSPECCION_RC",
-    listGestionLogistica: "GESTION_LOGISTICA",
-    listHistorial: "HISTORIAL"
+    listGestionRegistro: "GESTION_REGISTRO",
+    listGestionLogistica: "GESTION_LOGISTICA"
   }
 };
