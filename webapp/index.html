@@ -3,22 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Control de Abandonos Legales</title>
+  <title>Gestión de Abandonos Legales</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
-      <div class="topbar-title-group">
-        <button class="icon-button" id="menuButton" type="button" aria-label="Menu">=</button>
-        <div class="topbar-title">Gestion de Abandonos Legales</div>
+    <header class="pa-bar">
+      <div class="pa-bar-left">
+        <span class="pa-waffle" aria-hidden="true">
+          <svg viewBox="0 0 16 16" width="16" height="16" fill="currentColor"><path d="M1 1h3v3H1zM6.5 1h3v3h-3zM12 1h3v3h-3zM1 6.5h3v3H1zM6.5 6.5h3v3h-3zM12 6.5h3v3h-3zM1 12h3v3H1zM6.5 12h3v3h-3zM12 12h3v3h-3z"/></svg>
+        </span>
+        <span class="pa-bar-app">Gestión de Abandonos</span>
+        <span class="pa-bar-sep"></span>
+        <span class="pa-bar-name">Control de Abandonos Legales</span>
+        <span id="dataModeBadge" class="mode-badge">Mock local</span>
       </div>
-      <div class="topbar-actions">
-        <div class="search-shell">
-          <input id="globalSearch" class="search-input" type="search" placeholder="Buscar abandono..." />
-        </div>
+      <div class="pa-bar-right">
         <div class="tester-shell">
-          <div class="tester-label">Prueba de roles</div>
           <label class="tester-field">
             <span>Rol</span>
             <select id="roleSelector"></select>
@@ -28,37 +29,60 @@
             <select id="userSelector"></select>
           </label>
         </div>
-        <button class="icon-button" type="button" aria-label="Configuracion">Config</button>
-        <div class="user-pill" id="userPill">JD</div>
+        <div class="pa-bar-avatar" id="userPill">JD</div>
       </div>
     </header>
 
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-badge">GL</div>
-        <div>
-          <div class="brand-title">Gestion Legal</div>
-          <div class="brand-subtitle">Abandonos</div>
+    <div class="app-frame">
+      <header class="app-header card">
+        <div class="app-logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="44" height="44" fill="none" stroke="#742774" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="13" width="27" height="22" rx="2"/>
+            <path d="M11 13v22M18 13v22M25 13v22M4 20h27M4 28h27"/>
+            <path d="M35.5 24l9.2 17.5a1.5 1.5 0 0 1-1.3 2.2H27.6a1.5 1.5 0 0 1-1.3-2.2L35.5 24z" fill="#fff"/>
+            <path d="M35.5 31v5.5" stroke-width="2.3"/>
+            <circle cx="35.5" cy="40.3" r="1.15" fill="#742774" stroke="none"/>
+          </svg>
         </div>
-      </div>
-      <nav class="sidebar-nav">
-        <button class="nav-item active" data-view="registro" type="button">Registro y Control</button>
-        <button class="nav-item" data-view="logistica" type="button">Operacion Logistica</button>
-        <button class="nav-item" data-view="administracion" type="button">Administracion</button>
-      </nav>
-      <div class="sidebar-footer">
-        <div class="footer-label">Modo de datos</div>
-        <div id="dataModeBadge" class="mode-badge">Mock local</div>
-        <button id="dataModelButton" class="sidebar-data-model" type="button">Modelo de Datos</button>
-      </div>
-    </aside>
+        <div class="app-heading">
+          <h1 class="app-title">Gestión de Abandonos Legales</h1>
+          <p class="app-subtitle">Control, seguimiento y trazabilidad · GIT Registro y Control / GIT Operación Logística</p>
+        </div>
+        <div class="app-user">
+          <div class="app-user-avatar" id="userAvatar">JD</div>
+          <div class="app-user-info">
+            <div class="app-user-name" id="userName">Juan Diaz</div>
+            <div class="app-user-role" id="userRole">Administrador</div>
+          </div>
+        </div>
+      </header>
 
-    <main class="content">
-      <section id="view-registro" class="view active"></section>
-      <section id="view-logistica" class="view"></section>
-      <section id="view-administracion" class="view"></section>
-      <section id="view-modelo" class="view"></section>
-    </main>
+      <nav class="pa-tabs" id="tabs" aria-label="Secciones">
+        <button class="pa-tab nav-item active" data-view="registro" type="button">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+          <span>GIT Registro y Control</span>
+        </button>
+        <button class="pa-tab nav-item" data-view="logistica" type="button">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h11v10H2zM13 9h4l3 3v4h-7"/><circle cx="6.5" cy="17.5" r="1.7"/><circle cx="16.5" cy="17.5" r="1.7"/></svg>
+          <span>GIT Operación Logística</span>
+        </button>
+        <button class="pa-tab nav-item" data-view="administracion" type="button">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18M6 16v-5M11 16V6M16 16v-8M21 16V4" transform="translate(-1 0)"/></svg>
+          <span>Administración</span>
+        </button>
+        <button class="pa-tab" id="dataModelButton" type="button">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5.5" rx="7" ry="2.8"/><path d="M5 5.5v13c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8v-13M5 12c0 1.5 3.1 2.8 7 2.8s7-1.3 7-2.8"/></svg>
+          <span>Modelo de Datos</span>
+        </button>
+      </nav>
+
+      <main class="content">
+        <section id="view-registro" class="view active"></section>
+        <section id="view-logistica" class="view"></section>
+        <section id="view-administracion" class="view"></section>
+        <section id="view-modelo" class="view"></section>
+      </main>
+    </div>
   </div>
 
   <div id="overlay" class="overlay"></div>
