@@ -324,6 +324,7 @@ const DATA_MODEL = {
       { name: "PesoMercanciaRC", type: "Numero o texto", rule: "Editable", note: "Peso registrado en inspeccion RC" },
       { name: "DescripcionMercanciaRC", type: "Texto largo", rule: "Editable", note: "Descripcion de mercancia validada en inspeccion RC" },
       { name: "ObservacionesRC", type: "Texto largo", rule: "Editable", note: "Hallazgos RC" },
+      { name: "AdjuntosRC", type: "Adjuntos (multiple)", rule: "Editable", note: "Archivos subidos por el GIT de Registro y Control. En SharePoint corresponde a los adjuntos nativos del elemento" },
       { name: "FechaActualizacion", type: "Fecha y hora", rule: "Automatica", note: "Ultima modificacion de la inspeccion RC" }
     ]
   },
@@ -341,6 +342,7 @@ const DATA_MODEL = {
       { name: "AvaluoTemporal", type: "Numero", rule: "Editable", note: "Valor preliminar del avaluo" },
       { name: "AvaluoDefinitivo", type: "Numero", rule: "Editable", note: "Valor final del avaluo" },
       { name: "ObservacionesLogistica", type: "Texto largo", rule: "Editable", note: "Notas de gestion" },
+      { name: "AdjuntosLogistica", type: "Adjuntos (multiple)", rule: "Editable", note: "Archivos subidos por el GIT de Operacion Logistica. En SharePoint corresponde a los adjuntos nativos del elemento" },
       { name: "FechaActualizacion", type: "Fecha y hora", rule: "Automatica", note: "Ultima modificacion de la gestion logistica" }
     ]
   },
@@ -652,6 +654,128 @@ function renderEyeButton(label = "Ver detalle") {
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
   `;
+}
+
+const MAX_ADJUNTO_BYTES = 5 * 1024 * 1024;
+
+function formatFileSize(bytes) {
+  if (!bytes && bytes !== 0) return "";
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo seleccionado."));
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderAdjuntosList(adjuntos, canEdit) {
+  if (!adjuntos.length) {
+    return `<div class="empty-state">Sin adjuntos.</div>`;
+  }
+  return `
+    <div class="adjuntos-list">
+      ${adjuntos.map((adjunto) => `
+        <div class="adjunto-item">
+          <a class="adjunto-link" href="${escapeAttr(adjunto.contenido)}" download="${escapeAttr(adjunto.nombre)}" target="_blank" rel="noopener">${escapeHtml(adjunto.nombre)}</a>
+          <span class="adjunto-meta">${escapeHtml(formatFileSize(adjunto.tamano))} · ${formatDateTime(adjunto.fecha)} · ${escapeHtml(adjunto.usuario)}</span>
+          ${canEdit ? `<button class="btn-link adjunto-remove" type="button" data-action="remove-adjunto" data-adjunto-id="${escapeAttr(adjunto.id)}">Quitar</button>` : ""}
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderAdjuntosSection(view, adjuntos, canEdit) {
+  const inputId = `adjuntoInput-${view}`;
+  return `
+    <div class="panel-section">
+      <h3>Adjuntos</h3>
+      ${renderAdjuntosList(adjuntos, canEdit)}
+      ${canEdit ? `
+        <div class="adjunto-upload">
+          <input type="file" id="${inputId}" data-role="adjunto-input" />
+          <button class="btn btn-secondary btn-quiet" type="button" data-action="upload-adjunto">Subir adjunto</button>
+        </div>
+        <p class="field-hint">Maximo 5 MB por archivo. En modo local el archivo queda guardado en este navegador.</p>
+      ` : ""}
+    </div>
+  `;
+}
+
+async function uploadAdjunto(view, recordId) {
+  const input = els.sidePanel.querySelector('[data-role="adjunto-input"]');
+  const file = input?.files?.[0];
+  if (!file) {
+    alert("Selecciona un archivo primero.");
+    return;
+  }
+  if (file.size > MAX_ADJUNTO_BYTES) {
+    alert("El archivo supera el limite de 5 MB para el modo local.");
+    return;
+  }
+  try {
+    const contenido = await readFileAsDataUrl(file);
+    const adjunto = {
+      id: crypto.randomUUID(),
+      nombre: file.name,
+      tipo: file.type || "application/octet-stream",
+      tamano: file.size,
+      contenido,
+      fecha: todayIsoDateTime(),
+      usuario: currentUser.name
+    };
+    if (view === "registro") {
+      await dataService.addAdjuntoRC(recordId, adjunto);
+    } else {
+      await dataService.addAdjuntoLogistica(recordId, adjunto);
+    }
+    await loadData();
+    renderAll();
+    if (view === "registro") {
+      openRegistroPanel(recordId);
+    } else {
+      openLogisticaPanel(recordId);
+    }
+  } catch (error) {
+    alert(error?.message || "No se pudo subir el adjunto. Puede que el modo local se haya quedado sin espacio.");
+  }
+}
+
+async function removeAdjunto(view, recordId, adjuntoId) {
+  if (!adjuntoId) return;
+  if (!window.confirm("Quitar este adjunto?")) return;
+  try {
+    if (view === "registro") {
+      await dataService.removeAdjuntoRC(recordId, adjuntoId);
+    } else {
+      await dataService.removeAdjuntoLogistica(recordId, adjuntoId);
+    }
+    await loadData();
+    renderAll();
+    if (view === "registro") {
+      openRegistroPanel(recordId);
+    } else {
+      openLogisticaPanel(recordId);
+    }
+  } catch (error) {
+    alert(error?.message || "No se pudo quitar el adjunto.");
+  }
+}
+
+function bindAdjuntosEvents(view, recordId) {
+  const uploadButton = els.sidePanel.querySelector('[data-action="upload-adjunto"]');
+  if (uploadButton) {
+    uploadButton.addEventListener("click", () => uploadAdjunto(view, recordId));
+  }
+  Array.from(els.sidePanel.querySelectorAll('[data-action="remove-adjunto"]')).forEach((button) => {
+    button.addEventListener("click", () => removeAdjunto(view, recordId, button.dataset.adjuntoId));
+  });
 }
 
 function isFinalEstado(estado) {
@@ -1070,6 +1194,7 @@ function renderPanelRegistro(record) {
         <div class="field"><label>Descripcion de Mercancia</label><textarea name="descripcionMercanciaRC" ${canEditInspection ? "" : "readonly"}>${escapeHtml(record.descripcionMercanciaRC)}</textarea></div>
         <div class="field"><label>Observaciones RC</label><textarea name="observacionesRC" ${canEditInspection ? "" : "readonly"}>${escapeHtml(record.observacionesRC)}</textarea></div>
       </div>
+      ${isExisting ? renderAdjuntosSection("registro", record.adjuntosRC || [], canEditInspection) : ""}
     </form>
     <div class="panel-footer">
       <div class="panel-footer-actions panel-footer-actions-compact">
@@ -1096,6 +1221,7 @@ function renderPanelRegistro(record) {
   if (reportarButton) reportarButton.addEventListener("click", () => reportToLogistica(record.id));
   if (legalizarButton) legalizarButton.addEventListener("click", () => legalizeCaso(record.id));
   if (noEfectivoButton) noEfectivoButton.addEventListener("click", () => markNoEfectivo(record.id));
+  if (isExisting) bindAdjuntosEvents("registro", record.id);
 }
 
 function renderPanelLogistica(record) {
@@ -1145,6 +1271,7 @@ function renderPanelLogistica(record) {
         </div>
         <div class="field"><label>Descripcion de Mercancia RC</label><textarea readonly>${escapeHtml(record.descripcionMercanciaRC)}</textarea></div>
         <div class="field"><label>Observaciones RC</label><textarea readonly>${escapeHtml(record.observacionesRC)}</textarea></div>
+        <div class="field"><label>Adjuntos RC</label>${renderAdjuntosList(record.adjuntosRC || [], false)}</div>
       </div>
       <div class="panel-section">
         <h3>Gestion Operacion Logistica</h3>
@@ -1164,6 +1291,7 @@ function renderPanelLogistica(record) {
         </div>
         <div class="field"><label>Observaciones Logistica</label><textarea name="observacionesLogistica" ${canEditGestion ? "" : "readonly"}>${escapeHtml(record.observacionesLogistica)}</textarea></div>
       </div>
+      ${renderAdjuntosSection("logistica", record.adjuntosLogistica || [], canEditGestion)}
     </form>
     <div class="panel-footer">
       <div class="panel-footer-actions">
@@ -1187,6 +1315,7 @@ function renderPanelLogistica(record) {
   if (trasladoButton) {
     trasladoButton.addEventListener("click", () => markDispuesto(record.id));
   }
+  bindAdjuntosEvents("logistica", record.id);
 }
 
 function renderPanelAdmin(record) {
@@ -1231,6 +1360,7 @@ function renderPanelAdmin(record) {
         </div>
         <div class="field"><label>Descripcion de Mercancia RC</label><textarea readonly>${escapeHtml(record.descripcionMercanciaRC)}</textarea></div>
         <div class="field"><label>Observaciones RC</label><textarea readonly>${escapeHtml(record.observacionesRC)}</textarea></div>
+        <div class="field"><label>Adjuntos RC</label>${renderAdjuntosList(record.adjuntosRC || [], false)}</div>
       </div>
       <div class="panel-section">
         <h3>Gestion Operacion Logistica</h3>
@@ -1257,6 +1387,7 @@ function renderPanelAdmin(record) {
           <div class="field"><label>Avaluo Definitivo</label><input readonly value="${escapeAttr(formatCurrencyValue(record.avaluoDefinitivo))}" /></div>
         </div>
         <div class="field"><label>Observaciones Logistica</label><textarea readonly>${escapeHtml(record.observacionesLogistica)}</textarea></div>
+        <div class="field"><label>Adjuntos Logistica</label>${renderAdjuntosList(record.adjuntosLogistica || [], false)}</div>
       </div>
     </div>
     <div class="panel-footer">
@@ -1839,7 +1970,9 @@ function createEmptyRecord() {
     fechaDisposicion: "",
     fechaCierre: "",
     fechaCreacion: "",
-    fechaActualizacion: ""
+    fechaActualizacion: "",
+    adjuntosRC: [],
+    adjuntosLogistica: []
   };
 }
 
@@ -1994,6 +2127,7 @@ function createMockService() {
         pesoMercanciaRC: record.pesoMercanciaRC,
         descripcionMercanciaRC: record.descripcionMercanciaRC,
         observacionesRC: record.observacionesRC,
+        adjuntosRC: record.adjuntosRC || [],
         fechaActualizacion: now
       };
 
@@ -2070,6 +2204,7 @@ function createMockService() {
         avaluoTemporal: record.avaluoTemporal,
         avaluoDefinitivo: record.avaluoDefinitivo,
         observacionesLogistica: record.observacionesLogistica,
+        adjuntosLogistica: record.adjuntosLogistica || [],
         fechaActualizacion: now
       };
 
@@ -2081,6 +2216,56 @@ function createMockService() {
         model.gestionRegistro.find((item) => item.documentoTransporte === record.documentoTransporte),
         gestionLogistica
       );
+    },
+    async addAdjuntoRC(documentoTransporte, adjunto) {
+      const model = readLocalModel();
+      const existing = model.gestionRegistro.find((item) => item.documentoTransporte === documentoTransporte);
+      const updated = {
+        ...(existing || { documentoTransporte }),
+        adjuntosRC: [...(existing?.adjuntosRC || []), adjunto],
+        fechaActualizacion: todayIsoDateTime()
+      };
+      model.gestionRegistro = upsertByDocumentoTransporte(model.gestionRegistro, updated);
+      writeLocalModel(model);
+      return buildViewRecordFromModel(model, documentoTransporte);
+    },
+    async removeAdjuntoRC(documentoTransporte, adjuntoId) {
+      const model = readLocalModel();
+      const existing = model.gestionRegistro.find((item) => item.documentoTransporte === documentoTransporte);
+      if (!existing) return buildViewRecordFromModel(model, documentoTransporte);
+      const updated = {
+        ...existing,
+        adjuntosRC: (existing.adjuntosRC || []).filter((item) => item.id !== adjuntoId),
+        fechaActualizacion: todayIsoDateTime()
+      };
+      model.gestionRegistro = upsertByDocumentoTransporte(model.gestionRegistro, updated);
+      writeLocalModel(model);
+      return buildViewRecordFromModel(model, documentoTransporte);
+    },
+    async addAdjuntoLogistica(documentoTransporte, adjunto) {
+      const model = readLocalModel();
+      const existing = model.gestionLogistica.find((item) => item.documentoTransporte === documentoTransporte);
+      const updated = {
+        ...(existing || { documentoTransporte }),
+        adjuntosLogistica: [...(existing?.adjuntosLogistica || []), adjunto],
+        fechaActualizacion: todayIsoDateTime()
+      };
+      model.gestionLogistica = upsertByDocumentoTransporte(model.gestionLogistica, updated);
+      writeLocalModel(model);
+      return buildViewRecordFromModel(model, documentoTransporte);
+    },
+    async removeAdjuntoLogistica(documentoTransporte, adjuntoId) {
+      const model = readLocalModel();
+      const existing = model.gestionLogistica.find((item) => item.documentoTransporte === documentoTransporte);
+      if (!existing) return buildViewRecordFromModel(model, documentoTransporte);
+      const updated = {
+        ...existing,
+        adjuntosLogistica: (existing.adjuntosLogistica || []).filter((item) => item.id !== adjuntoId),
+        fechaActualizacion: todayIsoDateTime()
+      };
+      model.gestionLogistica = upsertByDocumentoTransporte(model.gestionLogistica, updated);
+      writeLocalModel(model);
+      return buildViewRecordFromModel(model, documentoTransporte);
     }
   };
 }
@@ -2131,6 +2316,22 @@ function createSharePointService() {
     async saveLogistica(record) {
       console.warn("Modo SharePoint requiere ajuste de escritura segun tu tenant. Se usa almacenamiento local como respaldo.");
       return mockService.saveLogistica(record);
+    },
+    async addAdjuntoRC(documentoTransporte, adjunto) {
+      console.warn("Modo SharePoint requiere ajuste de escritura segun tu tenant. Se usa almacenamiento local como respaldo.");
+      return mockService.addAdjuntoRC(documentoTransporte, adjunto);
+    },
+    async removeAdjuntoRC(documentoTransporte, adjuntoId) {
+      console.warn("Modo SharePoint requiere ajuste de escritura segun tu tenant. Se usa almacenamiento local como respaldo.");
+      return mockService.removeAdjuntoRC(documentoTransporte, adjuntoId);
+    },
+    async addAdjuntoLogistica(documentoTransporte, adjunto) {
+      console.warn("Modo SharePoint requiere ajuste de escritura segun tu tenant. Se usa almacenamiento local como respaldo.");
+      return mockService.addAdjuntoLogistica(documentoTransporte, adjunto);
+    },
+    async removeAdjuntoLogistica(documentoTransporte, adjuntoId) {
+      console.warn("Modo SharePoint requiere ajuste de escritura segun tu tenant. Se usa almacenamiento local como respaldo.");
+      return mockService.removeAdjuntoLogistica(documentoTransporte, adjuntoId);
     }
   };
 }
@@ -2264,6 +2465,8 @@ function createViewRecord(abandono = {}, gestionRegistro = {}, gestionLogistica 
     avaluoTemporal: gestionLogistica.avaluoTemporal || "",
     avaluoDefinitivo: gestionLogistica.avaluoDefinitivo || "",
     observacionesLogistica: gestionLogistica.observacionesLogistica || "",
+    adjuntosRC: gestionRegistro.adjuntosRC || [],
+    adjuntosLogistica: gestionLogistica.adjuntosLogistica || [],
       estado: normalizeEstadoValue(abandono.estado),
       fechaDisposicion: abandono.fechaDisposicion || "",
       fechaCierre: abandono.fechaCierre || "",

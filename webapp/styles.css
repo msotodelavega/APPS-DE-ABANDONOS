@@ -1357,3 +1357,62 @@ tbody tr:hover {
 .filter-chip.active .filter-count {
   background: rgba(255, 255, 255, 0.28);
 }
+
+/* ---------- Adjuntos ---------- */
+.adjuntos-list {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.adjunto-item {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--outline-variant);
+  background: var(--surface-container-low);
+}
+
+.adjunto-link {
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.adjunto-link:hover {
+  text-decoration: underline;
+}
+
+.adjunto-meta {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.adjunto-remove {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--danger);
+}
+
+.adjunto-upload {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adjunto-upload input[type="file"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.field-hint {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 11px;
+}
